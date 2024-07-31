@@ -46,7 +46,7 @@ export class AuthMiddleware {
                 name: Nombre,
                 username: Login,
                 email: Correo,
-                photoUrl: `https://servicios.litoprocess.com/colaboradores/api/foto/${Personal || 'XX'}`
+                photoURL: `https://servicios.litoprocess.com/colaboradores/api/foto/${Personal || 'XX'}`
             };
             next();
         } catch (e) {
@@ -65,23 +65,23 @@ export class AuthMiddleware {
             if (!autorization.startsWith("Bearer ")) return res.status(401).json({ error: "No token provided" });
             const token = autorization.split(" ").at(1) || "";
             const response = await getAuth(defaultApp)
-                .verifyIdToken(token);
-            const { uid: id, name, email, picture: photoURL } = response
+                .verifyIdToken(token);                
+            const { uid: id, name, email, picture: photoURL  } = response
             const externalDBUser = await prisma.externalUser.findUnique({ where: { id: response.uid } });
             if (externalDBUser && externalDBUser.estatus == false) {
-                return res.status(401).json({ error: 'User disabled' });
+                return res.status(401).json({ error: 'Usuario deshabilitado' });
             }
             const user = {
                 id,
                 name,
                 username: email?.split('@')[0],
                 email,
-                photoURL
+                photoURL: photoURL || `https://servicios.litoprocess.com/colaboradores/api/foto/XX`
             };
             if (!externalDBUser) {
                 await prisma.externalUser.create({
                     data: {
-                        ...user,
+                        ...user,                        
                         register: new Date(),
                         estatus: true
                     }

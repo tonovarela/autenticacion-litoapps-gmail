@@ -12,15 +12,15 @@ export class AuthService {
          const {login,password}= loginUserDTO;
           const userLitoDB = await prisma.cat_Usuarios.findFirst({ where: {Login:login,Password:password} });
          if (userLitoDB && userLitoDB.estatus == 'INACTIVO') {
-                throw CustomError.unAuthorized('User disabled');
+                throw CustomError.unAuthorized('Usuario deshabilitado');
          }
-         if (!userLitoDB) throw CustomError.unAuthorized('Invalid credentials');
+         if (!userLitoDB) throw CustomError.unAuthorized('Credenciales incorrectas');
         const { Id_Usuario } = userLitoDB;
         const token = await JWTAdapter.createToken({ id: Id_Usuario });
         if (!token) {
-            throw CustomError.internalServerError('Error creating token');
+            throw CustomError.internalServerError('Error al generar token');
         }
-        return { id: Id_Usuario, token };        
+        return { token };        
 }
 
 }

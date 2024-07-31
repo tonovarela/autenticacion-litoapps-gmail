@@ -28,8 +28,9 @@ export class Server {
     
     async start() {
       
-  
+      
       //* Middlewares
+      this.app.use(cors());
       this.app.use( express.json() ); // raw
       this.app.use( express.urlencoded({ extended: true }) ); // x-www-form-urlencoded
       //this.app.use(fileUpload({limits: {fileSize: 1024 * 1024 * 5}}));
@@ -39,7 +40,7 @@ export class Server {
   
       //* Routes
       this.app.use( this.routes );
-      this.app.use(cors());
+      
   
       //* SPA /^\/(?!api).*/  <== Únicamente si no empieza con la palabra api
       this.app.get('*', (req, res) => {
